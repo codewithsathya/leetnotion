@@ -1,0 +1,20 @@
+{
+  "allQuestions": {
+    "questionId": "",
+    "hints": "hints",
+    "solution": "solution {id canSeeDetail paidOnly hasVideoSolution paidOnlyVideo content rating{id count average } }",
+    "title": "title",
+    "titleSlug": "titleSlug",
+    "difficulty": "difficulty",
+    "isPaidOnly": "isPaidOnly",
+    "categoryTitle": "categoryTitle",
+    "stats": "stats",
+    "topicTags": "topicTags { name slug }",
+    "questionFrontendId": "questionFrontendId",
+    "likes": "likes",
+    "dislikes": "dislikes",
+    "isLiked": "isLiked",
+    "article": "article",
+    "content": "content"
+  }
+}

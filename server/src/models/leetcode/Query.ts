@@ -46,4 +46,6 @@ export default class Query {
       }
     }
   }`;
+
+  static readonly allProblems = `query allQuestionsStatuses {  allQuestions: allQuestions {  questionId  }}`
 }
