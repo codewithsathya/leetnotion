@@ -1,7 +1,7 @@
 import cookieUtil from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
-export class LeetcodeUser{
+export default class User{
   readonly username: string;
   readonly csrftoken: string;
   readonly session: string;
