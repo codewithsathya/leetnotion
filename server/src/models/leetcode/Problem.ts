@@ -16,7 +16,7 @@ export type Problem = {
   difficulty?: "Easy" | "Medium" | "Hard",
   isPaidOnly?: boolean,
   categoryTitle?: string,
-  stats?: string | { totalAccepted: "string", totalSubmission: "string", totalAcceptedRaw: number, totalSubmissionRaw: number, acRate: string },
+  stats?: { totalAccepted: string, totalSubmission: string, totalAcceptedRaw: number, totalSubmissionRaw: number, acRate: string },
   topicTags?: { name: string, slug: string }[];
   companyTags?: {
     [company: string]: number

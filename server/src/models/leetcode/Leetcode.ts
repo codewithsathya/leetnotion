@@ -9,6 +9,7 @@ import Query from "./Query";
 import questionQuery from "./query.json";
 import questionCompany from '@app-lib/json/questionCompany.json';
 import questionFrequency from "@app-lib/json/questionFrequency.json";
+import Question from "../schema/Question";
 export default class Leetcode {
   private static readonly apiEndpoint = "https://leetcode.com/graphql"
   private static readonly submissionApi = "https://leetcode.com/api/submissions";
@@ -103,13 +104,20 @@ export default class Leetcode {
       let arr: { company: string, frequency: number }[] = questionCompany[key as QC] as { company: string, frequency: number }[];
       if (arr !== undefined)
         arr.forEach(item => {
-          companyTags[item.company] = item.frequency as number;
+          let companyName = item.company;
+          companyName = companyName.replace(".", "_");
+          companyTags[companyName] = item.frequency as number;
         })
       allQuestionsData[key].companyTags = companyTags;
       allQuestionsData[key].link = `https://leetcode.com/problems/${allQuestionsData[key].titleSlug}`;
     }
 
-    console.log(JSON.stringify(allQuestionsData));
+    let questions: Question[] = [];
+    await Question.deleteMany();
+    for(let value of Object.values(allQuestionsData)){
+      questions.push(value);
+    }
+    await Question.insertMany(questions);
     fs.writeFileSync("./src/lib/json/allQuestions.json", JSON.stringify(allQuestionsData));
     fs.writeFileSync("./dist/lib/json/allQuestions.json", JSON.stringify(allQuestionsData));
   }
