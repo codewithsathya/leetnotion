@@ -2,11 +2,12 @@
   "name": "leetnotion-backend",
   "version": "1.0.0",
   "description": "Backend for leetnotion website",
-  "main": "src/app.ts",
+  "main": "./dist/app.ts",
   "scripts": {
+    "start": "node ./dist/app.js",
     "build": "yarn clean && tsc && yarn copy-files",
-    "start": "yarn build && node dist/app.js",
-    "dev": "yarn build && nodemon",
+    "watch": "nodemon --exec \"yarn build && yarn start\" --watch src --ext ts",
+    "dev": "yarn build && ts-node-dev -r tsconfig-paths/register src/app.ts",
     "clean": "rimraf dist/",
     "copy-files": "copyfiles -u 1 src/**/*.graphql dist/"
   },
@@ -21,6 +22,7 @@
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongoose": "^6.6.0"
   },
   "devDependencies": {
@@ -33,6 +35,14 @@
     "@types/node": "^18.7.16",
     "copyfiles": "^2.4.1",
     "nodemon": "^2.0.19",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "tsconfig-paths": "^4.1.0",
+    "typedoc": "^0.23.14",
+    "typescript": "^4.8.3"
+  },
+  "_moduleAliases": {
+    "@app-root": "dist",
+    "@app-lib": "dist/lib",
+    "@app-models": "dist/models"
   }
 }

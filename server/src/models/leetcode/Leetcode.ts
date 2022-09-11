@@ -1,11 +1,14 @@
+import fs from "fs";
+import axios from "axios";
+
 import User from "./User";
 import { Problem } from "./Problem";
 import { Submission } from "./Submission";
-import axios, { AxiosError } from "axios";
 import Query from "./Query";
-import questionQuery from "./query.json";
-import fs from "fs";
 
+import questionQuery from "./query.json";
+import questionCompany from '@app-lib/json/questionCompany.json';
+import questionFrequency from "@app-lib/json/questionFrequency.json";
 export default class Leetcode {
   private static readonly apiEndpoint = "https://leetcode.com/graphql"
   private static readonly submissionApi = "https://leetcode.com/api/submissions";
@@ -59,19 +62,13 @@ export default class Leetcode {
 
   static async updateLeetcodeData() {
     let allQuestionsData: { [questionId: string]: Problem } = {};
-
-
-    
-    
-    
-    
     for (let [key, value] of Object.entries(questionQuery.allQuestions)) {
       let data = JSON.stringify({
         "operationName": "allQuestionsStatuses",
         "variables": {},
         "query": `query allQuestionsStatuses { allQuestions: allQuestions { questionId ${value} } }`
       });
-  
+
       let config = {
         method: 'post',
         url: Leetcode.apiEndpoint,
@@ -92,10 +89,28 @@ export default class Leetcode {
         })
         console.log("Updated " + key);
       } catch (error: any) {
-        console.log(error.response.data)
+        console.log(error.response)
       }
     };
+    type QF = keyof typeof questionFrequency;
+    type QC = keyof typeof questionCompany;
+
+    for (let key of Object.keys(allQuestionsData)) {
+      let frequency = questionFrequency[key as QF];
+      allQuestionsData[key].frequency = frequency as number;
+
+      const companyTags: { [company: string]: number } = {};
+      let arr: { company: string, frequency: number }[] = questionCompany[key as QC] as { company: string, frequency: number }[];
+      if (arr !== undefined)
+        arr.forEach(item => {
+          companyTags[item.company] = item.frequency as number;
+        })
+      allQuestionsData[key].companyTags = companyTags;
+      allQuestionsData[key].link = `https://leetcode.com/problems/${allQuestionsData[key].titleSlug}`;
+    }
+
     console.log(JSON.stringify(allQuestionsData));
-    fs.writeFileSync("./json/allQuestions.json", JSON.stringify(allQuestionsData));
+    fs.writeFileSync("./src/lib/json/allQuestions.json", JSON.stringify(allQuestionsData));
+    fs.writeFileSync("./dist/lib/json/allQuestions.json", JSON.stringify(allQuestionsData));
   }
 }

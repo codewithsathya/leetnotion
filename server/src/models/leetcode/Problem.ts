@@ -18,6 +18,10 @@ export type Problem = {
   categoryTitle?: string,
   stats?: string | { totalAccepted: "string", totalSubmission: "string", totalAcceptedRaw: number, totalSubmissionRaw: number, acRate: string },
   topicTags?: { name: string, slug: string }[];
+  companyTags?: {
+    [company: string]: number
+  },
+  frequency?: number,
   questionFrontendId?: string,
   likes?: number,
   dislikes?: number,
