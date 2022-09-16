@@ -1,0 +1,114 @@
+{
+  "parent": {
+    "type": "page_id",
+    "page_id": ""
+  },
+  "title": [
+    {
+      "type": "text",
+      "text": {
+        "content": "Questions",
+        "link": null
+      }
+    }
+  ],
+  "is_inline": true,
+  "properties": {
+    "Name": {
+      "title": {}
+    },
+    "Status": {
+      "select": {
+        "options": [
+          {
+            "name": "Not started",
+            "color": "red"
+          },
+          {
+            "name": "In progress",
+            "color": "yellow"
+          },
+          {
+            "name": "Done",
+            "color": "green"
+          }
+        ]
+      }
+    },
+    "Difficulty": {
+      "select": {
+        "options": [
+          {
+            "name": "Easy",
+            "color": "green"
+          },
+          {
+            "name": "Medium",
+            "color": "yellow"
+          },
+          {
+            "name": "Hard",
+            "color": "red"
+          }
+        ]
+      }
+    },
+    "Frequency": {
+      "number": {}
+    },
+    "Total Accepted": {
+      "number": {}
+    },
+    "Total Submissions": {
+      "number": {}
+    },
+    "Likes": {
+      "number": {}
+    },
+    "Dislikes": {
+      "number": {}
+    },
+    "Accuracy": {
+      "rich_text": {}
+    },
+    "Forgettable": {
+      "checkbox": {}
+    },
+    "Company Tags": {
+      "type": "multi_select",
+      "multi_select": {
+        "options": []
+      }
+    },
+    "Question Tags": {
+      "type": "multi_select",
+      "multi_select": {
+        "options": []
+      }
+    },
+    "Lists": {
+      "type": "multi_select",
+      "multi_select": {
+        "options": []
+      }
+    },
+    "Java Solution": {
+      "url": {}
+    },
+    "Leetcode Solution": {
+      "url": {}
+    },
+    "Link": {
+      "url": {}
+    },
+    "Question ID": {
+      "number": {}
+    },
+    "Deadline": {
+      "date": {}
+    },
+    "Last Submitted": {
+      "date": {}
+    }
+  }
+}
