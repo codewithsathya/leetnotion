@@ -89,7 +89,7 @@ app.get("/questionLists", async (req, res) => {
   res.send(questionLists);
 })
 
-app.get("/uploadSubmittedQuestions", async (req, res) => {
+async function upload(){
   let notionUser = new NotionUser(process.env.NOTION_SECRET as string, process.env.NOTION_PAGE_ID);
   let leetcodeUser = new LeetcodeUser(process.env.LEETCODE_COOKIE as string);
   let createPageResponse = await Notion.createLeetcodeDatabase(notionUser);
@@ -101,10 +101,16 @@ app.get("/uploadSubmittedQuestions", async (req, res) => {
   let formattedSubmissions = Leetcode.formatSubmittedQuestions(submissions);
   let submittedQuestionIds = Object.keys(formattedSubmissions);
   let allQuestionsTemp = allQuestions as {[questionId:string]: Problem};
-  let questions = submittedQuestionIds.map(questionId => allQuestionsTemp[questionId]);
+  // let questions = submittedQuestionIds.map(questionId => allQuestionsTemp[questionId]);
+  let questions = Object.values(allQuestions);
   console.log("Uploading started");
   let response = await Notion.uploadSubmittedQuestions(notionUser, questions, lists, formattedSubmissions);
-  res.send(response);
+  return response;
+}
+
+app.get("/uploadSubmittedQuestions", async (req, res) => {
+  upload();
+  res.send("Uploading Started");
 })
 
 
