@@ -7,7 +7,6 @@ export type Question = {
     paidOnly: boolean,
     hasVideoSolution: boolean,
     paidOnlyVideo: boolean,
-    content: string | null,
     rating: { id: string, count: number, average: string } | null,
   } | null,
   title?: string,

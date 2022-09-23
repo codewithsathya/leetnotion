@@ -14,7 +14,6 @@ const questionSchema = new Schema<Question>({
     paidOnly: Boolean,
     hasVideoSolution: Boolean,
     paidOnlyVideo: Boolean,
-    content: String,
     rating: {
       id: String,
       count: Number,
