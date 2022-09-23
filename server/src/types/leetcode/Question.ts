@@ -1,4 +1,4 @@
-export type Problem = {
+export type Question = {
   questionId: string,
   hints?: string[],
   solution?: {

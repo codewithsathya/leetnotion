@@ -1,9 +1,9 @@
 import axios from "axios";
-import { Problem } from "../leetcode/Problem";
 
-import databaseStructure from "./databaseStructure.json"
+import databaseStructure from "@app-lib/json/databaseStructure.json"
 import NotionUser from "./User";
 import User from "./../schema/User";
+import { Question } from "@app-root/types/leetcode";
 
 export default class Notion {
   constructor() { }
@@ -33,7 +33,7 @@ export default class Notion {
     }
   }
 
-  static getNotionMapping(notionUser: NotionUser, question: Problem, lists: { [questionId: string]: string[] }, submissions: { [questionId: string]: { timestamp: number, lang: string, code: string, title_slug: string }[] }) {
+  static getNotionMapping(notionUser: NotionUser, question: Question, lists: { [questionId: string]: string[] }, submissions: { [questionId: string]: { timestamp: number, lang: string, code: string, title_slug: string }[] }) {
     let children: { object: string; type: string; code: { rich_text: { type: string; text: { content: string; }; }[]; language: string; }; }[] = [], lastSubmitted = null, status: "Not started" | "Done" | "In progress" = "Not started";
     if (submissions[question.questionId]) {
       status = "Done";
@@ -261,7 +261,7 @@ export default class Notion {
     return data;
   }
 
-  static async uploadSubmittedQuestions(notionUser: NotionUser, questions: Problem[], lists: { [questionId: string]: string[] }, submissions: { [questionId: string]: { timestamp: number, lang: string, code: string, title_slug: string }[] }) {
+  static async uploadSubmittedQuestions(notionUser: NotionUser, questions: Question[], lists: { [questionId: string]: string[] }, submissions: { [questionId: string]: { timestamp: number, lang: string, code: string, title_slug: string }[] }) {
     let waitTime = 400;
     let responses = [];
     let count = 0;
@@ -291,6 +291,14 @@ export default class Notion {
       }
     }
     return responses;
+  }
+
+  static async getPageId(email: string, questionId: string){
+    let user = await User.findOne({email});
+    let map = user?.notionQuestionPageMapping;
+    let parsed = JSON.stringify(map);
+    let temp = JSON.parse(parsed);
+    return temp[questionId]
   }
 }
 

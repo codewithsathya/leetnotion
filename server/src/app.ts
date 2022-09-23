@@ -1,6 +1,5 @@
 //imports
 import "module-alias/register";
-import fs from "fs";
 
 import express, { Application, Request, Response } from "express";
 import dotenv from "dotenv";
@@ -13,8 +12,8 @@ import LeetcodeUser from "./models/leetcode/User";
 import Notion from "./models/notion/Notion";
 import NotionUser from "./models/notion/User";
 import User from "./models/schema/User";
-import { Problem } from "./models/leetcode/Problem";
 import allQuestions from "@app-lib/json/allQuestions.json";
+import { Question } from "@app-root/types/leetcode";
 
 
 const app: Application = express();
@@ -32,7 +31,7 @@ app.get("/test", async (req, res) => {
   let user = new LeetcodeUser(process.env.LEETCODE_COOKIE as string);
   let submissions = await Leetcode.getAllSubmissions(user);
   let formattedSubmissions = Leetcode.formatSubmittedQuestions(submissions);
-  
+
   res.send(formattedSubmissions);
 })
 
@@ -89,7 +88,7 @@ app.get("/questionLists", async (req, res) => {
   res.send(questionLists);
 })
 
-async function upload(){
+async function upload() {
   let notionUser = new NotionUser(process.env.NOTION_SECRET as string, process.env.NOTION_PAGE_ID);
   let leetcodeUser = new LeetcodeUser(process.env.LEETCODE_COOKIE as string);
   let createPageResponse = await Notion.createLeetcodeDatabase(notionUser);
@@ -100,7 +99,7 @@ async function upload(){
   console.log("lists collected");
   let formattedSubmissions = Leetcode.formatSubmittedQuestions(submissions);
   let submittedQuestionIds = Object.keys(formattedSubmissions);
-  let allQuestionsTemp = allQuestions as {[questionId:string]: Problem};
+  let allQuestionsTemp = allQuestions as { [questionId: string]: Question };
   // let questions = submittedQuestionIds.map(questionId => allQuestionsTemp[questionId]);
   let questions = Object.values(allQuestions);
   console.log("Uploading started");
@@ -111,6 +110,12 @@ async function upload(){
 app.get("/uploadSubmittedQuestions", async (req, res) => {
   upload();
   res.send("Uploading Started");
+})
+
+app.post("/getPageId", async (req, res) => {
+  let { email, questionId } = req.body;
+  let pageId = await Notion.getPageId(email, questionId);
+  res.send(pageId).status(200);
 })
 
 

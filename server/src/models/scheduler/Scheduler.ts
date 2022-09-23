@@ -1,6 +1,5 @@
 import allQuestions from "@app-root/lib/json/allQuestions.json";
-import { Problem } from "@app-models/leetcode/Problem";
-
+import { Question } from "@app-root/types/leetcode";
 console.log(allQuestions);
 
 export default class Scheduler{
@@ -8,7 +7,7 @@ export default class Scheduler{
 
   }
 
-  static sortQuestions(arr: Problem[]){
+  static sortQuestions(arr: Question[]){
     let comparator = eval(`(a, b) => b.frequency - a.frequency`);
     arr.sort(comparator);
   }

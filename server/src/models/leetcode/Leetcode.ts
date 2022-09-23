@@ -2,16 +2,16 @@ import fs from "fs";
 import axios from "axios";
 
 import User from "./User";
-import { Problem } from "./Problem";
-import { Submission } from "./Submission";
+import { Submission } from "../../types/leetcode/Submission";
 import Query from "./Query";
 
-import questionQuery from "./query.json";
+import questionQuery from "@app-lib/json/query.json";
 import questionCompany from '@app-lib/json/questionCompany.json';
 import questionFrequency from "@app-lib/json/questionFrequency.json";
 import allQuestions from "@app-lib/json/allQuestions.json";
 import slugIdMapping from "@app-lib/json/slugIdMapping.json";
 import Question from "../schema/Question";
+import { Question as QuestionType } from "@app-root/types/leetcode"
 
 export default class Leetcode {
   private static readonly apiEndpoint = "https://leetcode.com/graphql"
@@ -82,7 +82,7 @@ export default class Leetcode {
   }
 
   static async updateLeetcodeData() {
-    let allQuestionsData: { [questionId: string]: Problem } = {};
+    let allQuestionsData: { [questionId: string]: QuestionType } = {};
     for (let [key, value] of Object.entries(questionQuery.allQuestions)) {
       let data = JSON.stringify({
         "operationName": "allQuestionsStatuses",
@@ -107,7 +107,7 @@ export default class Leetcode {
         } catch (error) {
 
         }
-        let questions: Problem[] = response.data.allQuestions;
+        let questions: QuestionType[] = response.data.allQuestions;
         questions.forEach(question => {
           if (!allQuestionsData[question.questionId]) {
             allQuestionsData[question.questionId] = { questionId: question.questionId };
@@ -142,7 +142,7 @@ export default class Leetcode {
       allQuestionsData[key].link = `https://leetcode.com/problems/${allQuestionsData[key].titleSlug}`;
     }
 
-    let questions: Question[] = [];
+    let questions: QuestionType[] = [];
     await Question.deleteMany();
     for (let value of Object.values(allQuestionsData)) {
       questions.push(value);
@@ -209,13 +209,13 @@ export default class Leetcode {
     };
 
     let { data: response } = await axios(config);
-    let lists: {name: string, questions: { questionId: string }[]}[] = response.data.favoritesLists.allFavorites;
-    let questionLists: {[questionId: string]: string[]} = {};
-    for(let list of lists){
+    let lists: { name: string, questions: { questionId: string }[] }[] = response.data.favoritesLists.allFavorites;
+    let questionLists: { [questionId: string]: string[] } = {};
+    for (let list of lists) {
       let listName = list.name;
-      for(let question of list.questions){
+      for (let question of list.questions) {
         let id = question.questionId;
-        if(!questionLists[id]){
+        if (!questionLists[id]) {
           questionLists[id] = [];
         }
         questionLists[id].push(listName);
