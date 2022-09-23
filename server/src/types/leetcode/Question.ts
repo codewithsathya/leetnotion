@@ -22,7 +22,7 @@ export type Question = {
     [company: string]: number
   },
   frequency?: number,
-  questionFrontendId?: string,
+  questionFrontendId: string,
   likes?: number,
   dislikes?: number,
   isLiked?: number | null,

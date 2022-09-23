@@ -6,10 +6,11 @@ import { Submission } from "../../types/leetcode/Submission";
 import Query from "./Query";
 
 import questionQuery from "@app-lib/json/query.json";
-import questionCompany from '@app-lib/json/questionCompany.json';
-import questionFrequency from "@app-lib/json/questionFrequency.json";
+// import questionCompany from '@app-lib/json/questionCompany.json';
+// import questionFrequency from "@app-lib/json/questionFrequency.json";
 import allQuestions from "@app-lib/json/allQuestions.json";
 import slugIdMapping from "@app-lib/json/slugIdMapping.json";
+import companyQuestion from "@app-lib/json/company_question.json";
 import Question from "../schema/Question";
 import { Question as QuestionType } from "@app-root/types/leetcode"
 
@@ -87,7 +88,7 @@ export default class Leetcode {
       let data = JSON.stringify({
         "operationName": "allQuestionsStatuses",
         "variables": {},
-        "query": `query allQuestionsStatuses { allQuestions: allQuestions { questionId ${value} } }`
+        "query": `query allQuestionsStatuses { allQuestions: allQuestions { questionFrontendId ${value} } }`
       });
 
       let config = {
@@ -109,10 +110,12 @@ export default class Leetcode {
         }
         let questions: QuestionType[] = response.data.allQuestions;
         questions.forEach(question => {
-          if (!allQuestionsData[question.questionId]) {
-            allQuestionsData[question.questionId] = { questionId: question.questionId };
+          let id = question.questionFrontendId;
+          question.questionId = question.questionFrontendId;
+          if (!allQuestionsData[id]) {
+            allQuestionsData[id] = { questionId: id, questionFrontendId: id };
           }
-          allQuestionsData[question.questionId] = { ...allQuestionsData[question.questionId], ...question }
+          allQuestionsData[id] = { ...allQuestionsData[id], ...question }
         })
         console.log("Updated " + key);
       } catch (error: any) {
@@ -126,9 +129,37 @@ export default class Leetcode {
     type QF = keyof typeof questionFrequency;
     type QC = keyof typeof questionCompany;
 
+    let nameIdMapping = Leetcode.generateQuestionNameIdMapping();
+
+    let questionCompany: {[questionId: string]: {company: string, frequency: number}[]} = {};
+    for(let [company, questions] of Object.entries(companyQuestion)){
+      for(let question of questions){
+        let title = question.name;
+        let questionId = nameIdMapping[title];
+        let frequency = parseInt(question.frequency);
+        if(!questionCompany[questionId]){
+          questionCompany[questionId] = [];
+        }
+        questionCompany[questionId].push({company, frequency});
+      }
+    }
+    fs.writeFileSync("./src/lib/json/questionCompany.json", JSON.stringify(questionCompany));
+    fs.writeFileSync("./dist/lib/json/questionCompany.json", JSON.stringify(questionCompany));
+    let questionFrequency: {[questionId: string]: number} = {};
+    for(let questionId of Object.keys(allQuestions)){
+      if(!questionCompany[questionId]){
+        questionFrequency[questionId] = 0;
+        continue;
+      }
+      let frequency = 0;
+      for(let company of questionCompany[questionId]){
+        frequency += company.frequency;
+      }
+      questionFrequency[questionId] = frequency;
+    }
     for (let key of Object.keys(allQuestionsData)) {
       let frequency = questionFrequency[key as QF];
-      allQuestionsData[key].frequency = frequency === null ? 0 : frequency as number;
+      allQuestionsData[key].frequency = frequency;
 
       const companyTags: { [company: string]: number } = {};
       let arr: { company: string, frequency: number }[] = questionCompany[key as QC] as { company: string, frequency: number }[];
@@ -222,6 +253,16 @@ export default class Leetcode {
       }
     }
     return questionLists;
+  }
+
+  static generateQuestionNameIdMapping(){
+    let nameIdMapping: {[name: string]: string} = {};
+    for(let value of Object.values(allQuestions)){
+      nameIdMapping[value.title] = value.questionId;
+    }
+    fs.writeFileSync("./src/lib/json/questionNameIdMapping.json", JSON.stringify(nameIdMapping));
+    fs.writeFileSync("./dist/lib/json/questionNameIdMapping.json", JSON.stringify(nameIdMapping));
+    return nameIdMapping;
   }
 }
 
