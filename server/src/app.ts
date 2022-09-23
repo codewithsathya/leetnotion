@@ -104,10 +104,10 @@ async function upload() {
   return response;
 }
 
-app.get("/uploadSubmittedQuestions", async (req, res) => {
-  upload();
-  res.send("Uploading Started");
-})
+// app.get("/uploadSubmittedQuestions", async (req, res) => {
+//   upload();
+//   res.send("Uploading Started");
+// })
 
 app.post("/getPageId", async (req, res) => {
   let { email, questionId } = req.body;
