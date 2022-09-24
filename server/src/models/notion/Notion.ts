@@ -313,8 +313,6 @@ export default class Notion {
       }
       try {
         let { data: response } = await axios.request(options);
-        let pageId = response.id;
-        await User.findOneAndUpdate({ email: process.env.EMAIL }, { $set: {[`notionQuestionPageMapping.${question.questionId}`]: pageId} });
         responses.push(response);
         console.log(count++);
       } catch (error) {

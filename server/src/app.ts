@@ -99,6 +99,9 @@ async function upload() {
   console.log("lists collected");
   let formattedSubmissions = Leetcode.formatSubmittedQuestions(submissions);
   let questions = Object.values(allQuestions);
+  questions = questions.filter(question => {
+    return parseInt(question.questionId) >= 1 && parseInt(question.questionId) <= 23;
+  })
   console.log("Uploading started");
   let response = await Notion.uploadSubmittedQuestions(notionUser, questions, lists, formattedSubmissions);
   return response;
