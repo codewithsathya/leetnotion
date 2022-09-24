@@ -293,6 +293,38 @@ export default class Notion {
     return responses;
   }
 
+  static async uploadQuestions(notionUser: NotionUser, questions: Question[],){
+    let waitTime = 400;
+    let responses = [];
+    let count = 0;
+    for (let question of questions) {
+      let data = this.getNotionMapping(notionUser, question, {}, {});
+      await sleep(waitTime);
+      const options = {
+        method: "POST",
+        url: "https://api.notion.com/v1/pages",
+        headers: {
+          Accept: "application/json",
+          "Notion-Version": "2022-06-28",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${notionUser.secret}`
+        },
+        data
+      }
+      try {
+        let { data: response } = await axios.request(options);
+        let pageId = response.id;
+        await User.findOneAndUpdate({ email: process.env.EMAIL }, { $set: {[`notionQuestionPageMapping.${question.questionId}`]: pageId} });
+        responses.push(response);
+        console.log(count++);
+      } catch (error) {
+        console.log(error);
+        return error;
+      }
+    }
+    return responses;
+  }
+
   static async getPageId(email: string, questionId: string){
     let user = await User.findOne({email});
     let map = user?.notionQuestionPageMapping;
@@ -300,6 +332,8 @@ export default class Notion {
     let temp = JSON.parse(parsed);
     return temp[questionId]
   }
+
+
 }
 
 async function sleep(time: number) {

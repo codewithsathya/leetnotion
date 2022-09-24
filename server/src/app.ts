@@ -104,6 +104,16 @@ async function upload() {
   return response;
 }
 
+async function uploadQuestions(){
+  let notionUser = new NotionUser(process.env.NOTION_SECRET as string, process.env.NOTION_PAGE_ID);
+  let createPageResponse = await Notion.createLeetcodeDatabase(notionUser);
+  notionUser.databaseId = createPageResponse.id;
+  let questions = Object.values(allQuestions);
+  console.log("Uploading started");
+  let response = await Notion.uploadQuestions(notionUser, questions);
+  return response;
+}
+
 // app.get("/uploadSubmittedQuestions", async (req, res) => {
 //   upload();
 //   res.send("Uploading Started");
@@ -114,6 +124,11 @@ app.post("/getPageId", async (req, res) => {
   let pageId = await Notion.getPageId(email, questionId);
   res.send(pageId).status(200);
 })
+
+app.get("/uploadQuestions", async (req, res) => {
+  uploadQuestions();
+  res.send("Uploading Started");
+});
 
 
 const port = process.env.PORT || 3000;
