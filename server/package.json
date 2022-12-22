@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "build": "yarn clean && tsc && yarn copy-files",
-    "production": "pm2 start yarn --interpreter bash --name leetnotion -- start",
+    "production": "yarn build && pm2 start yarn --interpreter bash --name leetnotion -- start",
     "watch": "nodemon --exec \"yarn build && yarn start\" --watch src --ext ts",
     "dev": "yarn build && ts-node-dev -r tsconfig-paths/register src/app.ts",
 
